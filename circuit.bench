@@ -1,25 +1,18 @@
-# c17
-# 5 inputs
-# 2 outputs
-# 0 inverter
-# 6 gates ( 6 NANDs )
+# circuit.bench
+# 3 inputs
+# 1 output
+# 4 gates
 
-# INPUTS:
-INPUT(a)
-INPUT(b)
-INPUT(c)
-INPUT(d)
-INPUT(e)
 
-# OUTPUTS:
-OUTPUT(j)
-OUTPUT(k)
+INPUT(A)
+INPUT(B)
+INPUT(C)
 
-# GATES:
-g = NAND(c, d)
-h = NAND(b, g)
-l = NOT(a)
-f = NAND(a, c)
-i = NAND(g, e)
-j = NAND(f, h)
-k = NAND(h, i)
+
+OUTPUT(K)
+
+
+f = NOT(B)
+g = AND(A, B)
+h = AND(f, C)
+K = OR(g, h)

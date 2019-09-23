@@ -1,4 +1,6 @@
 from __future__ import print_function
+from pprint import pprint
+from genFaultList import genFaultList
 import os
 
 # Function List:
@@ -405,6 +407,20 @@ def main():
 
     # keep an initial (unassigned any value) copy of the circuit for an easy reset
     newCircuit = circuit
+
+    #select fault file, default is  full_f_list.txt
+    while True:
+        faultListName = "full_f_list.txt"
+        print("\n Write full fault list file: use " + faultListName + "?" + " Enter to accept or type filename: ")
+        userInput = input()
+        if userInput == "":
+            break
+        else:
+            faultListName = os.path.join(script_dir, userInput)
+            break
+    
+    #generates the fault list
+    genFaultList(circuit, faultListName, cktFile)
 
     # Select input file, default is input.txt
     while True:
