@@ -1,5 +1,7 @@
 from __future__ import print_function
 from genFaultList import genFaultList
+from faultSimHelper import getFaults
+from pprint import pprint
 import os
 
 # Function List:
@@ -401,8 +403,9 @@ def main():
     circuit = netRead(cktFile)
     print("\n Finished processing benchmark file and built netlist dictionary: \n")
     # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-    printCkt(circuit)
+    #printCkt(circuit)
     # print(circuit)
+    pprint(circuit)
 
     # keep an initial (unassigned any value) copy of the circuit for an easy reset
     newCircuit = circuit
@@ -419,7 +422,26 @@ def main():
             break
     
     #generates the fault list
-    genFaultList(circuit, faultListName, cktFile)
+    genFaultList(circuit, faultListName, cktFile) 
+
+    #Select input fault file, default is f_list.txt
+    while True:
+        faultInputName = "f_list.txt"
+        print("\n Read input fault file: use " + faultInputName + "?" + " Enter to accept or type filename: ")
+        userInput = input()
+        if userInput == "":
+
+            break
+        else:
+            faultInputName = os.path.join(script_dir, userInput)
+            if not os.path.isfile(faultInputName):
+                print("File does not exist. \n")
+            else:
+                break
+
+    #gets the faults that need to be tested
+    faults = getFaults(faultInputName)
+    pprint(faults)
 
     # Select input file, default is input.txt
     while True:
