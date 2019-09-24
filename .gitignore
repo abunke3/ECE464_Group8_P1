@@ -1,3 +1,4 @@
 #dont track
 .vscode/
 __pycache__/
+*.pyc

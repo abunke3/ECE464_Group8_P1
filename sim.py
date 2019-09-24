@@ -1,5 +1,4 @@
 from __future__ import print_function
-from pprint import pprint
 from genFaultList import genFaultList
 import os
 
@@ -402,8 +401,8 @@ def main():
     circuit = netRead(cktFile)
     print("\n Finished processing benchmark file and built netlist dictionary: \n")
     # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-    # printCkt(circuit)
-    print(circuit)
+    printCkt(circuit)
+    # print(circuit)
 
     # keep an initial (unassigned any value) copy of the circuit for an easy reset
     newCircuit = circuit
