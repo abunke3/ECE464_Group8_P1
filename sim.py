@@ -528,7 +528,7 @@ def main():
         # printCkt(circuit)
         print(circuit)
 
-
+        pprint(circuit)
         for y in circuit["OUTPUTS"][1]:
             if not circuit[y][2]:
                 output = "NETLIST ERROR: OUTPUT LINE \"" + y + "\" NOT ACCESSED"
