@@ -20,5 +20,5 @@ def getFaults(faultFile):
         data.append(line.split("-"))
 
         faults.append(data)
-    
+    inFile.close()
     return faults

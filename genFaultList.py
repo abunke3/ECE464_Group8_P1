@@ -23,3 +23,4 @@ def genFaultList(circuit, faultFile, circuitName):
             numFaults += 2
 
     outFile.write("\n# total faults: " + str(numFaults))
+    outFile.close()

@@ -1,6 +1,7 @@
 from __future__ import print_function
 from genFaultList import genFaultList
 from faultSimHelper import getFaults
+import copy
 from pprint import pprint
 import os
 
@@ -539,6 +540,69 @@ def main():
         print(line + " -> " + output + " written into output file. \n")
         outputFile.write(" -> " + output + "\n")
 
+        #after the output is written run the faults
+        print("\n *** Now running fault tests *** \n")
+
+        for faultLine in faults:
+
+            #creates a copy of the circuit to be used for fault testing
+            faultCircuit = copy.deepcopy(circuit)
+
+            for key in faultCircuit:
+                if (key[0:5]=="wire_"):
+                    faultCircuit[key][2] = False
+                    faultCircuit[key][3] = 'U'
+            
+            #sets up the inputs for the fault circuit
+            faultCircuit = inputRead(faultCircuit, line)
+
+            #handles stuck at faults
+            if(faultLine[1][1] == "SA"):
+                for key in faultCircuit:
+                   if(faultLine[1][0] == key[5:]):
+                        faultCircuit[key][2] = True
+                        faultCircuit[key][3] = faultLine[1][2]
+
+            #handles in in stuck at faults by making a new "wire"
+            elif(faultLine[1][1] == "IN"):
+                faultCircuit["faultWire"] = ["FAULT", "NONE", True, faultLine[1][4]]
+
+                #finds the input that needs to be changed to the fault line
+                for key in faultCircuit:
+                    if(faultLine[1][0] == key[5:]):
+                        inputIndex = 0
+                        for gateInput in faultCircuit[key][1]:
+                            print("found gate\n")
+                            if(faultLine[1][2] == gateInput[5:]):
+                                print("found input\n")
+                                faultCircuit[key][1][inputIndex] = "faultWire"
+                            
+                            inputIndex += 1
+            
+            #runs Circuit Simulation
+            faultCircuit = basic_sim(faultCircuit)
+            
+            #gets the output
+            faultOutput = ""
+            for y in faultCircuit["OUTPUTS"][1]:
+                if not faultCircuit[y][2]:
+                    faultOutput = "NETLIST ERROR: OUTPUT LINE \"" + y + "\" NOT ACCESSED"
+                    break
+                faultOutput = str(faultCircuit[y][3]) + faultOutput
+
+            #checks to see if the fault was detected
+            if(output != faultOutput):
+                faultLine[0] = True
+
+            pprint(faultCircuit)
+
+            print(output)
+            print("\n")
+            print(faultOutput)
+            pprint(faults)
+            input()
+
+
         # After each input line is finished, reset the circuit
         print("\n *** Now resetting circuit back to unknowns... \n")
        
@@ -554,7 +618,7 @@ def main():
 
         print("\n*******************\n")
         
-    outputFile.close
+    outputFile.close()
     #exit()
 
 
