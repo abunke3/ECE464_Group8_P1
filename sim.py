@@ -2,7 +2,6 @@ from __future__ import print_function
 from genFaultList import genFaultList
 from faultSimHelper import getFaults
 import copy
-from pprint import pprint
 import os
 
 # Function List:
@@ -369,8 +368,7 @@ def basic_sim(circuit):
             print("Progress: updating " + curr + " = " + circuit[curr][3] + " as the output of " + circuit[curr][0] + " for:")
             for term in circuit[curr][1]:
                 print(term + " = " + circuit[term][3])
-            print("\nPress Enter to Continue...")
-            input()
+            print("\n")
 
         else:
             # If the terminals have not been accessed yet, append the current node at the end of the queue
@@ -408,9 +406,8 @@ def main():
     circuit = netRead(cktFile)
     print("\n Finished processing benchmark file and built netlist dictionary: \n")
     # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-    #printCkt(circuit)
-    # print(circuit)
-    pprint(circuit)
+    printCkt(circuit)
+    #print(circuit)
 
     # keep an initial (unassigned any value) copy of the circuit for an easy reset
     newCircuit = circuit
@@ -446,7 +443,6 @@ def main():
 
     #gets the faults that need to be tested
     faults = getFaults(faultInputName)
-    pprint(faults)
 
     # Select input file, default is input.txt
     while True:
@@ -465,8 +461,8 @@ def main():
 
     # Select output file, default is output.txt
     while True:
-        outputName = "output.txt"
-        print("\n Write output file: use " + outputName + "?" + " Enter to accept or type filename: ")
+        outputName = "fault_sim_result.txt"
+        print("\n Write result file: use " + outputName + "?" + " Enter to accept or type filename: ")
         userInput = input()
         if userInput == "":
             break
@@ -511,13 +507,14 @@ def main():
         
         print("\n before processing circuit dictionary...")
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        # printCkt(circuit)
-        print(circuit)
+        printCkt(circuit)
+        #print(circuit)
+
         print("\n ---> Now ready to simulate INPUT = " + line)
         circuit = inputRead(circuit, line)
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        # printCkt(circuit)
-        print(circuit)
+        printCkt(circuit)
+        #print(circuit)
 
 
         if circuit == -1:
@@ -539,10 +536,9 @@ def main():
         circuit = basic_sim(circuit)
         print("\n *** Finished simulation - resulting circuit: \n")
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        # printCkt(circuit)
-        print(circuit)
+        printCkt(circuit)
+        #print(circuit)
 
-        pprint(circuit)
         for y in circuit["OUTPUTS"][1]:
             if not circuit[y][2]:
                 output = "NETLIST ERROR: OUTPUT LINE \"" + y + "\" NOT ACCESSED"
@@ -586,9 +582,7 @@ def main():
                     if(faultLine[1][0] == key[5:]):
                         inputIndex = 0
                         for gateInput in faultCircuit[key][1]:
-                            print("found gate\n")
                             if(faultLine[1][2] == gateInput[5:]):
-                                print("found input\n")
                                 faultCircuit[key][1][inputIndex] = "faultWire"
                             
                             inputIndex += 1
@@ -618,14 +612,6 @@ def main():
                     outputFile.write(faultLine[1][0] + "-" + faultLine[1][1] + "-" + faultLine[1][2] + "-" + faultLine[1][3] + "-" + faultLine[1][4] + ": ")
                     outputFile.write(line + " -> " + faultOutput + "\n")
 
-            pprint(faultCircuit)
-
-            print(output)
-            print("\n")
-            print(faultOutput)
-            pprint(faults)
-            input()
-
 
         #adds extra line of space to file for formatiing
         outputFile.write("\n")
@@ -639,8 +625,8 @@ def main():
 
         print("\n circuit after resetting: \n")
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        # printCkt(circuit)
-        print(circuit)
+        printCkt(circuit)
+        #print(circuit)
 
         print("\n*******************\n")
 
@@ -651,8 +637,23 @@ def main():
         if(faultLine[0] == True):
             detectedFaults += 1
     
+    undetectedFaults = totalFaults - detectedFaults
+    
     outputFile.write("total detected faults: " + str(detectedFaults))
+    outputFile.write("\n\nundetected faults: " + str(undetectedFaults) + "\n")
+
+    for faultLine in faults:
+        if(faultLine[0] == False):
+            #prints out the fault if it is a SA
+            if(faultLine[1][1] == "SA"):
+                outputFile.write(faultLine[1][0] + "-" + faultLine[1][1] + "-" + faultLine[1][2] + "\n")
+
+            #prints out the fault if it is IN-SA
+            elif(faultLine[1][1] == "IN"):
+                outputFile.write(faultLine[1][0] + "-" + faultLine[1][1] + "-" + faultLine[1][2] + "-" + faultLine[1][3] + "-" + faultLine[1][4] + "\n")
         
+    outputFile.write("\nfault coverage: " + str(detectedFaults) + "/" + str(totalFaults) + " = " + "{:.0%}".format(detectedFaults/totalFaults))
+
     outputFile.close()
     #exit()
 

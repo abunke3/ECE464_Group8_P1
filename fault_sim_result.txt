@@ -17,3 +17,9 @@ detected:
 A-SA-0: 011 -> 0
 
 total detected faults: 3
+
+undetected faults: 2
+g-IN-B-SA-1
+f-SA-1
+
+fault coverage: 3/5 = 60%
