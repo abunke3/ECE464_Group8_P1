@@ -1,0 +1,11 @@
+# INPUTS:
+INPUT(A)
+INPUT(B)
+INPUT(C)
+
+OUTPUT(K)
+
+f=NOT(B)
+g=AND(A,B)
+h=AND(f,C)
+K=OR(g,h)

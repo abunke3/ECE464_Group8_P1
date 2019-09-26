@@ -1,0 +1,13 @@
+
+tv1 = 010 -> 0 (good)
+tv1 SA = 010 -> 0 (faultyOut)
+tv1 SA = 010 -> 1 (faultyOut)
+tv1 IN = 010 -> 1 (faultyOut)
+tv2 = 111 -> 1 (good)
+tv2 SA = 111 -> 0 (faultyOut)
+tv2 SA = 111 -> 1 (faultyOut)
+tv2 IN = 111 -> 1 (faultyOut)
+tv3 = 011 -> 1 (good)
+tv3 SA = 011 -> 0 (faultyOut)
+tv3 SA = 011 -> 1 (faultyOut)
+tv3 IN = 011 -> 1 (faultyOut)
