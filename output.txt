@@ -1,1 +1,19 @@
-111 -> 1
+# fault sim result
+# input: circuit.bench
+# input: input.txt
+# input: f_list.txt
+
+tv1 = 010 -> 0 (good)
+detected:
+A-SA-1: 010 -> 1
+h-SA-1: 010 -> 1
+
+tv2 = 111 -> 1 (good)
+detected:
+A-SA-0: 111 -> 0
+
+tv3 = 011 -> 1 (good)
+detected:
+A-SA-0: 011 -> 0
+
+total detected faults: 3

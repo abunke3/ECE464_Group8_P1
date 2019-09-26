@@ -346,7 +346,7 @@ def basic_sim(circuit):
 
         # initialize a flag, used to check if every terminal has been accessed
         term_has_value = True
-
+        
         # Check if the terminals have been accessed
         for term in circuit[curr][1]:
             if not circuit[term][2]:
@@ -354,8 +354,12 @@ def basic_sim(circuit):
                 break
 
         if term_has_value:
+            
+            #checks to make sure the gate output has not already been set
+            if(circuit[curr][2] == False):
+                circuit = gateCalc(circuit, curr)
+
             circuit[curr][2] = True
-            circuit = gateCalc(circuit, curr)
 
             # ERROR Detection if LOGIC does not exist
             if isinstance(circuit, str):
@@ -477,7 +481,13 @@ def main():
     inputFile = open(inputName, "r")
     outputFile = open(outputName, "w")
 
+    outputFile.write("# fault sim result\n")
+    outputFile.write("# input: " + cktFile + "\n")
+    outputFile.write("# input: " + inputName + "\n")
+    outputFile.write("# input: " + faultInputName + "\n\n")
+
     # Runs the simulator for each line of the input file
+    testVectorNum = 1
     for line in inputFile:
         # Initializing output variable each input line
         output = ""
@@ -491,7 +501,10 @@ def main():
 
         # Removing the the newlines at the end and then output it to the txt file
         line = line.replace("\n", "")
-        outputFile.write(line)
+        outputFile.write("tv" + str(testVectorNum) + " = " + line)
+
+        #updates testVectorNum for the next one
+        testVectorNum += 1
 
         # Removing spaces
         line = line.replace(" ", "")
@@ -538,7 +551,8 @@ def main():
 
         print("\n *** Summary of simulation: ")
         print(line + " -> " + output + " written into output file. \n")
-        outputFile.write(" -> " + output + "\n")
+        outputFile.write(" -> " + output + " (good)\n")
+        outputFile.write("detected:\n")
 
         #after the output is written run the faults
         print("\n *** Now running fault tests *** \n")
@@ -593,6 +607,16 @@ def main():
             #checks to see if the fault was detected
             if(output != faultOutput):
                 faultLine[0] = True
+                
+                #prints out the fault if it is a SA
+                if(faultLine[1][1] == "SA"):
+                    outputFile.write(faultLine[1][0] + "-" + faultLine[1][1] + "-" + faultLine[1][2] + ": ")
+                    outputFile.write(line + " -> " + faultOutput + "\n")
+                
+                #prints out the fault if it is IN-SA
+                elif(faultLine[1][1] == "IN"):
+                    outputFile.write(faultLine[1][0] + "-" + faultLine[1][1] + "-" + faultLine[1][2] + "-" + faultLine[1][3] + "-" + faultLine[1][4] + ": ")
+                    outputFile.write(line + " -> " + faultOutput + "\n")
 
             pprint(faultCircuit)
 
@@ -603,6 +627,8 @@ def main():
             input()
 
 
+        #adds extra line of space to file for formatiing
+        outputFile.write("\n")
         # After each input line is finished, reset the circuit
         print("\n *** Now resetting circuit back to unknowns... \n")
        
@@ -617,6 +643,15 @@ def main():
         print(circuit)
 
         print("\n*******************\n")
+
+    totalFaults = 0
+    detectedFaults = 0
+    for faultLine in faults:
+        totalFaults += 1
+        if(faultLine[0] == True):
+            detectedFaults += 1
+    
+    outputFile.write("total detected faults: " + str(detectedFaults))
         
     outputFile.close()
     #exit()
