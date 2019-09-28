@@ -1,0 +1,16 @@
+#Subtractor Circuit
+INPUT(Z)
+INPUT(X)
+INPUT(Y)
+
+OUTPUT(D)
+OUTPUT(B)
+
+
+e=XOR(X,Y)
+f=NOT(X)
+g=AND(f,Y)
+D=XOR(e,Z)
+h=NOT(e)
+i=AND(h,Z)
+B=OR(g,i)
