@@ -1,15 +1,67 @@
 from __future__ import print_function
-from genFaultList import genFaultList
-from faultSimHelper import getFaults
 import copy
 import os
 
 # Function List:
-# 1. netRead: read the benchmark file and build circuit netlist
-# 2. gateCalc: function that will work on the logic of each gate
-# 3. inputRead: function that will update the circuit dictionary made in netRead to hold the line values
-# 4. basic_sim: the actual simulation
-# 5. main: The main function
+# 0. getFaults: gets the faults from the file
+# 1. genFaultList: generates all of the faults and prints them to a file
+# 2. netRead: read the benchmark file and build circuit netlist
+# 3. gateCalc: function that will work on the logic of each gate
+# 4. inputRead: function that will update the circuit dictionary made in netRead to hold the line values
+# 5. basic_sim: the actual simulation
+# 6. main: The main function
+
+#gets all of the faults from the file
+def getFaults(faultFile):
+    #opens the file
+    inFile = open(faultFile, "r")
+
+    faults = []
+
+    #goes line by line and adds the faults to arrays
+    for line in inFile:
+        # Do nothing else if empty lines, ...
+        if (line == "\n"):
+            continue
+        # ... or any comments
+        if (line[0] == "#"):
+            continue
+        
+        line = line.replace("\n", "")
+        data = [False]
+        data.append(line.split("-"))
+
+        faults.append(data)
+    inFile.close()
+    return faults
+
+#generates all of the faults
+def genFaultList(circuit, faultFile, circuitName):
+    numFaults = 0
+    outFile = open(faultFile, "w")
+    
+    outFile.write("# " + circuitName + "\n")
+    outFile.write("# full SSA fault list\n\n")
+
+
+    #handles the inputs
+    for input in circuit["INPUTS"][1]:
+        outFile.write(input[5:] + "-SA-0\n")
+        outFile.write(input[5:] + "-SA-1\n")
+        numFaults += 2
+
+    for wire in circuit["GATES"][1]:
+        outFile.write(wire[5:] + "-SA-0\n")
+        outFile.write(wire[5:] + "-SA-1\n")
+        numFaults += 2
+
+        for inWire in circuit[wire][1]:
+            outFile.write(wire[5:] + "-IN-" + inWire[5:] + "-SA-0\n")
+            outFile.write(wire[5:] + "-IN-" + inWire[5:] + "-SA-1\n")
+            numFaults += 2
+
+    outFile.write("\n# total faults: " + str(numFaults))
+    outFile.close()
 
 # -------------------------------------------------------------------------------------------------------------------- #
 # FUNCTION: Neatly prints the Circuit Dictionary:
