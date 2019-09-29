@@ -160,6 +160,18 @@ def gateCalc(circuit, node):
     # terminal will contain all the input wires of this logic gate (node)
     terminals = list(circuit[node][1])  
 
+    # If the node is an Buffer gate output, solve and return the output
+    if circuit[node][0] == "BUFF":
+        if circuit[terminals[0]][3] == '0':
+            circuit[node][3] = '0'
+        elif circuit[terminals[0]][3] == '1':
+            circuit[node][3] = '1'
+        elif circuit[terminals[0]][3] == "U":
+            circuit[node][3] = "U"
+        else:  # Should not be able to come here
+            return -1
+        return circuit
+
     # If the node is an Inverter gate output, solve and return the output
     if circuit[node][0] == "NOT":
         if circuit[terminals[0]][3] == '0':
@@ -480,7 +492,7 @@ def main():
     outputFile.write("# fault sim result\n")
     outputFile.write("# input: " + cktFile + "\n")
     outputFile.write("# input: " + inputName + "\n")
-    outputFile.write("# input: " + faultInputName + "\n\n")
+    outputFile.write("# input: " + faultInputName + "\n\n\n")
 
     # Runs the simulator for each line of the input file
     testVectorNum = 1
@@ -507,14 +519,14 @@ def main():
         
         print("\n before processing circuit dictionary...")
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        printCkt(circuit)
-        #print(circuit)
+        #printCkt(circuit)
+        print(circuit)
 
         print("\n ---> Now ready to simulate INPUT = " + line)
         circuit = inputRead(circuit, line)
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        printCkt(circuit)
-        #print(circuit)
+        #printCkt(circuit)
+        print(circuit)
 
 
         if circuit == -1:
@@ -536,8 +548,8 @@ def main():
         circuit = basic_sim(circuit)
         print("\n *** Finished simulation - resulting circuit: \n")
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        printCkt(circuit)
-        #print(circuit)
+        #printCkt(circuit)
+        print(circuit)
 
         for y in circuit["OUTPUTS"][1]:
             if not circuit[y][2]:
@@ -625,8 +637,8 @@ def main():
 
         print("\n circuit after resetting: \n")
         # Uncomment the following line, for the neater display of the function and then comment out print(circuit)
-        printCkt(circuit)
-        #print(circuit)
+        #printCkt(circuit)
+        print(circuit)
 
         print("\n*******************\n")
 
@@ -651,8 +663,11 @@ def main():
             #prints out the fault if it is IN-SA
             elif(faultLine[1][1] == "IN"):
                 outputFile.write(faultLine[1][0] + "-" + faultLine[1][1] + "-" + faultLine[1][2] + "-" + faultLine[1][3] + "-" + faultLine[1][4] + "\n")
-        
-    outputFile.write("\nfault coverage: " + str(detectedFaults) + "/" + str(totalFaults) + " = " + "{:.0%}".format(detectedFaults/totalFaults))
+    
+    if(totalFaults != 0):
+        outputFile.write("\nfault coverage: " + str(detectedFaults) + "/" + str(totalFaults) + " = " + "{:.0%}".format(detectedFaults/totalFaults))
+    else:
+        outputFile.write("\nfault coverage: 0/0 = 0%")
 
     outputFile.close()
     #exit()
