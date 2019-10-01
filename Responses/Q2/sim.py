@@ -428,7 +428,7 @@ def main():
 
     #Select input fault file, default is f_list.txt
     while True:
-        faultInputName = "f_list.txt"
+        faultInputName = "full_f_list.txt"
         print("\n Read input fault file: use " + faultInputName + "?" + " Enter to accept or type filename: ")
         userInput = input()
         if userInput == "":

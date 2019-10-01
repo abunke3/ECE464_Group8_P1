@@ -1,7 +1,0 @@
-# fault sim result
-# input: c432.bench
-# input: ETV_set_2_simplified.txt
-# input: full_f_list.txt
-
-101010101010101010101010101010101010
-010101010101010101010101010101010101
